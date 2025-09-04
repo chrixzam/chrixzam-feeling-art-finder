@@ -96,7 +96,8 @@ function deriveTermsFromText(text) {
   }
 
   // 4) Prefer painting-y descriptors to bias results toward paintings
-  const paintingBias = ['painting','oil','canvas','gouache','watercolor']
+  // Use a single non-conflicting hint; multiple mediums (oil + watercolor) can over-constrain Met search
+  const paintingBias = ['painting']
 
   const combined = [...paintingBias, ...emotionTerms, ...extra]
   // Deduplicate preserving order
@@ -190,7 +191,19 @@ export default function App() {
     setQuery(q)
     setLoading(true)
     try {
-      const items = await searchMet(q)
+      let items = await searchMet(q)
+      // Fallback: if over-constrained query yields nothing, try without the painting bias
+      if (items.length === 0 && q.includes('painting')) {
+        const fallbackQ = q
+          .split(/\s+/)
+          .filter(t => t.toLowerCase() !== 'painting')
+          .slice(0, 3)
+          .join(' ')
+        if (fallbackQ) {
+          items = await searchMet(fallbackQ)
+          setQuery(`${q} (fallback → ${fallbackQ})`)
+        }
+      }
       setResults(items)
     } catch {
       setError('Sorry — something went wrong fetching art. Try again in a moment.')
