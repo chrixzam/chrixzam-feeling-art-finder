@@ -120,26 +120,30 @@ async function searchMet(q) {
   const res = await fetch(searchUrl)
   if (!res.ok) throw new Error('Search failed')
   const data = await res.json()
-  const ids = (data.objectIDs || []).slice(0, 48) // fetch a bit more to allow reordering
-  const items = []
+  const ids = (data.objectIDs || []).slice(0, 500)
 
-  for (const id of ids) {
-    const r = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
-    if (!r.ok) continue
-    const obj = await r.json()
-    if (!obj.primaryImageSmall) continue
-    const item = {
-      id: obj.objectID,
-      title: obj.title,
-      artist: obj.artistDisplayName || 'Unknown',
-      date: obj.objectDate || obj.objectBeginDate || '',
-      img: obj.primaryImageSmall,
-      url: obj.objectURL || `https://www.metmuseum.org/art/collection/search/${obj.objectID}`,
-      medium: obj.medium || '',
-      classification: obj.classification || '',
+  const itemPromises = ids.map(async id => {
+    try {
+      const r = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
+      if (!r.ok) return null
+      const obj = await r.json()
+      if (!obj.primaryImageSmall) return null
+      return {
+        id: obj.objectID,
+        title: obj.title,
+        artist: obj.artistDisplayName || 'Unknown',
+        date: obj.objectDate || obj.objectBeginDate || '',
+        img: obj.primaryImageSmall,
+        url: obj.objectURL || `https://www.metmuseum.org/art/collection/search/${obj.objectID}`,
+        medium: obj.medium || '',
+        classification: obj.classification || '',
+      }
+    } catch {
+      return null
     }
-    items.push(item)
-  }
+  })
+
+  const items = (await Promise.all(itemPromises)).filter(Boolean)
 
   // Bias results toward paintings first
   const isPainting = (it) => {
@@ -149,7 +153,31 @@ async function searchMet(q) {
   }
   const paintings = items.filter(isPainting)
   const others = items.filter(it => !isPainting(it))
-  return [...paintings, ...others].slice(0, 24)
+  return [...paintings, ...others].slice(0, 500)
+}
+
+async function searchAIC(q) {
+  const searchUrl = new URL('https://api.artic.edu/api/v1/artworks/search')
+  searchUrl.searchParams.set('q', q)
+  searchUrl.searchParams.set('fields', 'id,title,artist_display,date_display,image_id')
+  searchUrl.searchParams.set('limit', '500')
+
+  const res = await fetch(searchUrl)
+  if (!res.ok) throw new Error('Search failed')
+  const data = await res.json()
+
+  return (data.data || [])
+    .filter(obj => obj.image_id)
+    .map(obj => ({
+      id: `aic-${obj.id}`,
+      title: obj.title,
+      artist: obj.artist_display || 'Unknown',
+      date: obj.date_display || '',
+      img: `https://www.artic.edu/iiif/2/${obj.image_id}/full/843,/0/default.jpg`,
+      url: `https://www.artic.edu/artworks/${obj.id}`,
+      medium: '',
+      classification: '',
+    }))
 }
 
 export default function App() {
@@ -191,19 +219,20 @@ export default function App() {
     setQuery(q)
     setLoading(true)
     try {
-      let items = await searchMet(q)
+      let [metItems, aicItems] = await Promise.all([searchMet(q), searchAIC(q)])
       // Fallback: if over-constrained query yields nothing, try without the painting bias
-      if (items.length === 0 && q.includes('painting')) {
+      if (metItems.length === 0 && aicItems.length === 0 && q.includes('painting')) {
         const fallbackQ = q
           .split(/\s+/)
           .filter(t => t.toLowerCase() !== 'painting')
           .slice(0, 3)
           .join(' ')
         if (fallbackQ) {
-          items = await searchMet(fallbackQ)
+          ;[metItems, aicItems] = await Promise.all([searchMet(fallbackQ), searchAIC(fallbackQ)])
           setQuery(`${q} (fallback → ${fallbackQ})`)
         }
       }
+      const items = [...metItems, ...aicItems].slice(0, 500)
       setResults(items)
     } catch {
       setError('Sorry — something went wrong fetching art. Try again in a moment.')
@@ -235,7 +264,7 @@ export default function App() {
         </div>
       )}
 
-      {query && <p className="hint">Searching The Met for: <strong>{query}</strong></p>}
+      {query && <p className="hint">Searching The Met and Art Institute of Chicago for: <strong>{query}</strong></p>}
       {error && <p className="error">{error}</p>}
 
       <section className="grid">
@@ -265,7 +294,7 @@ export default function App() {
       )}
 
       <footer>
-        <small>Source: The Met Collection API. This is a demo; refine the emotion mapping as you like.</small>
+        <small>Sources: The Met Collection API and Art Institute of Chicago API. This is a demo; refine the emotion mapping as you like.</small>
       </footer>
     </div>
   )
