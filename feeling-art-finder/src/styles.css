@@ -1,6 +1,7 @@
-:root { --bg:#0b0c10; --card:#121318; --ink:#e7e9ee; --muted:#a9afbc; --accent:#6ea8fe; }
+/* Neutralize background tones while keeping dark theme */
+:root { --bg:#111213; --card:#151617; --ink:#e7e9ee; --muted:#b3b8c4; --accent:#6ea8fe; }
 * { box-sizing: border-box; }
-body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: var(--ink); background: radial-gradient(1200px 600px at 50% -200px, #1a1f2b, var(--bg)); }
+body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: var(--ink); background: radial-gradient(1200px 600px at 50% -200px, #1b1c1d, var(--bg)); }
 .wrap { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
 header h1 { margin: 0; font-size: 40px; letter-spacing: .4px; }
 .sub { color: var(--muted); margin-top: 6px; }
