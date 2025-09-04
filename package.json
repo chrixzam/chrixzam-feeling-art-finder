@@ -1,0 +1,13 @@
+{
+  "name": "feeling-art-finder-root",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Root wrapper for nested Vite React app",
+  "scripts": {
+    "dev": "npm --prefix feeling-art-finder run dev",
+    "build": "npm --prefix feeling-art-finder run build",
+    "preview": "npm --prefix feeling-art-finder run preview",
+    "lint": "npm --prefix feeling-art-finder run lint"
+  }
+}
+
