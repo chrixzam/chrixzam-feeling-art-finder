@@ -190,6 +190,7 @@ export default function App() {
     const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('likes') : null
     return saved ? JSON.parse(saved) : []
   })
+  const [tab, setTab] = useState('search')
 
   useEffect(() => {
     if (typeof localStorage !== 'undefined') {
@@ -246,50 +247,73 @@ export default function App() {
       <header>
         <h1>Feeling → Art</h1>
         <p className="sub">Type how you feel. We’ll fetch artwork that matches the vibe.</p>
+        <nav className="tabs">
+          <button
+            className={tab === 'search' ? 'active' : ''}
+            onClick={() => setTab('search')}
+            type="button"
+          >
+            Search
+          </button>
+          <button
+            className={tab === 'likes' ? 'active' : ''}
+            onClick={() => setTab('likes')}
+            type="button"
+          >
+            Likes ({likes.length})
+          </button>
+        </nav>
       </header>
 
-      <form onSubmit={handleSearch} className="bar">
-        <input
-          value={text}
-          onChange={e => setText(e.target.value)}
-          placeholder="e.g., I feel calm but a little nostalgic"
-          aria-label="Describe your feelings"
-        />
-        <button disabled={!text.trim() || loading}>{loading ? 'Searching…' : 'Find art'}</button>
-      </form>
-
-      {suggestedTerms.length > 0 && (
-        <div className="chips" aria-live="polite">
-          Suggested terms: {suggestedTerms.map(t => <span key={t} className="chip">{t}</span>)}
-        </div>
-      )}
-
-      {query && <p className="hint">Searching The Met and Art Institute of Chicago for: <strong>{query}</strong></p>}
-      {error && <p className="error">{error}</p>}
-
-      <section className="grid">
-        {results.map(item => (
-          <ArtCard
-            key={item.id}
-            item={item}
-            liked={likes.some(i => i.id === item.id)}
-            onToggle={toggleLike}
-          />
-        ))}
-      </section>
-
-      {!loading && results.length === 0 && query && (
-        <p className="empty">No matches. Try different words like “landscape”, “sunlight”, or “nocturne”.</p>
-      )}
-
-      {likes.length > 0 && (
+      {tab === 'search' && (
         <>
-          <h2>Liked Art</h2>
+          <form onSubmit={handleSearch} className="bar">
+            <input
+              value={text}
+              onChange={e => setText(e.target.value)}
+              placeholder="e.g., I feel calm but a little nostalgic"
+              aria-label="Describe your feelings"
+            />
+            <button disabled={!text.trim() || loading}>{loading ? 'Searching…' : 'Find art'}</button>
+          </form>
+
+          {suggestedTerms.length > 0 && (
+            <div className="chips" aria-live="polite">
+              Suggested terms: {suggestedTerms.map(t => <span key={t} className="chip">{t}</span>)}
+            </div>
+          )}
+
+          {query && <p className="hint">Searching The Met and Art Institute of Chicago for: <strong>{query}</strong></p>}
+          {error && <p className="error">{error}</p>}
+
           <section className="grid">
-            {likes.map(item => (
-              <ArtCard key={item.id} item={item} liked onToggle={toggleLike} />
+            {results.map(item => (
+              <ArtCard
+                key={item.id}
+                item={item}
+                liked={likes.some(i => i.id === item.id)}
+                onToggle={toggleLike}
+              />
             ))}
           </section>
+
+          {!loading && results.length === 0 && query && (
+            <p className="empty">No matches. Try different words like “landscape”, “sunlight”, or “nocturne”.</p>
+          )}
+        </>
+      )}
+
+      {tab === 'likes' && (
+        <>
+          {likes.length === 0 ? (
+            <p className="empty">No liked art yet.</p>
+          ) : (
+            <section className="grid">
+              {likes.map(item => (
+                <ArtCard key={item.id} item={item} liked onToggle={toggleLike} />
+              ))}
+            </section>
+          )}
         </>
       )}
 
