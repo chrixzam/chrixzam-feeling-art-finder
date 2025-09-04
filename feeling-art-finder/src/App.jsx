@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import ArtCard from './ArtCard'
 
 // Simple emotion → keyword map; tweak freely
 const EMOTION_MAP = [
@@ -51,6 +52,23 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState([])
   const [error, setError] = useState('')
+  const [likes, setLikes] = useState(() => {
+    const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('likes') : null
+    return saved ? JSON.parse(saved) : []
+  })
+
+  useEffect(() => {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('likes', JSON.stringify(likes))
+    }
+  }, [likes])
+
+  function toggleLike(item) {
+    setLikes(prev => {
+      const exists = prev.some(i => i.id === item.id)
+      return exists ? prev.filter(i => i.id !== item.id) : [...prev, item]
+    })
+  }
 
   const suggestedTerms = useMemo(() => {
     const t = text.toLowerCase()
@@ -75,7 +93,7 @@ export default function App() {
     try {
       const items = await searchMet(q)
       setResults(items)
-    } catch (err) {
+    } catch {
       setError('Sorry — something went wrong fetching art. Try again in a moment.')
     } finally {
       setLoading(false)
@@ -110,19 +128,28 @@ export default function App() {
 
       <section className="grid">
         {results.map(item => (
-          <a key={item.id} className="card" href={item.url} target="_blank" rel="noreferrer">
-            <img src={item.img} alt={`${item.title} by ${item.artist}`} loading="lazy" />
-            <div className="meta">
-              <h3>{item.title}</h3>
-              <p>{item.artist}{item.date ? `, ${item.date}` : ''}</p>
-              <p className="medium">{item.medium}</p>
-            </div>
-          </a>
+          <ArtCard
+            key={item.id}
+            item={item}
+            liked={likes.some(i => i.id === item.id)}
+            onToggle={toggleLike}
+          />
         ))}
       </section>
 
       {!loading && results.length === 0 && query && (
         <p className="empty">No matches. Try different words like “landscape”, “sunlight”, or “nocturne”.</p>
+      )}
+
+      {likes.length > 0 && (
+        <>
+          <h2>Liked Art</h2>
+          <section className="grid">
+            {likes.map(item => (
+              <ArtCard key={item.id} item={item} liked onToggle={toggleLike} />
+            ))}
+          </section>
+        </>
       )}
 
       <footer>
