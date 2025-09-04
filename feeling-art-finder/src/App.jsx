@@ -8,53 +8,103 @@ const AIC_MAX_LIMIT = 100
 const EMOTION_RULES = [
   {
     keys: ['happy','joy','joyful','grateful','optimistic','cheerful','content'],
-    core: ['sunlight','festival','garden','yellow','impressionism'],
-    strong: ['celebration','dance','carnival','bright','festival']
+    core: ['sunlit','festival','garden','bright','impressionist'],
+    strong: ['celebration','dance','carnival','vivid color','fauvism']
   },
   {
     keys: ['sad','down','melancholy','depressed','sorrow','blue'],
-    core: ['melancholy','nocturne','rain','twilight','blue'],
-    strong: ['mourning','winter','night','shadow','solitude']
+    core: ['melancholy','nocturne','rain','twilight','blue tones'],
+    strong: ['mourning','winter','shadowed interior','solitude','lamentation']
   },
   {
     keys: ['calm','peaceful','serene','relaxed','tranquil'],
     core: ['landscape','sea','horizon','twilight','pastoral'],
-    strong: ['still water','dusk','harbor','moonlight']
+    strong: ['still water','dusk','harbor','moonlight','contemplative']
   },
   {
     keys: ['anxious','stressed','uneasy','nervous','tense','fearful','worried'],
-    core: ['shadow','night','storm','abstract','gloom'],
-    strong: ['tempest','thunderstorm','drama','red','expressionism']
+    core: ['shadow','night','storm','ominous','gloom'],
+    strong: ['tempest','thunderstorm','drama','scarlet','expressionism']
   },
   {
     keys: ['angry','mad','furious','rage','irritated'],
-    core: ['storm','battle','red','drama'],
-    strong: ['tempest','conflagration','violent','expressionism']
+    core: ['storm','battle','red','fire','chaos'],
+    strong: ['conflagration','violent','expressionism','uprising','flames']
   },
   {
     keys: ['love','romantic','tender','affection','passion','heart'],
     core: ['kiss','embrace','venus','couple','mythology'],
-    strong: ['cupid','amour','wedding','allegory of love']
+    strong: ['cupid','amour','wedding','allegory of love','tender gaze']
   },
   {
     keys: ['lonely','alone','isolated','isolation'],
-    core: ['solitude','nocturne','empty street','night'],
-    strong: ['moonlight','harbor at night','interior','single figure']
+    core: ['solitude','nocturne','empty street','night','deserted'],
+    strong: ['moonlight','harbor at night','interior','single figure','quiet room']
   },
   {
     keys: ['hopeful','inspired','uplifted','optimism'],
     core: ['sunrise','spring','garden','light','dawn'],
-    strong: ['sunburst','golden light','festival','renewal']
+    strong: ['sunburst','golden light','festival','renewal','emerging sun']
   },
   {
     keys: ['nostalgic','homesick','yearning','wistful','remember'],
     core: ['vintage','childhood','memory','home','pastoral'],
-    strong: ['domestic interior','sepia','old town']
+    strong: ['domestic interior','sepia','old town','rustic','antique']
   },
   {
     keys: ['curious','inquisitive','wonder','interested'],
     core: ['astronomy','invention','book','science','learned'],
-    strong: ['observatory','cabinet of curiosities','atlas']
+    strong: ['observatory','cabinet of curiosities','atlas','study','experiment']
+  },
+  {
+    keys: ['excited','energetic','thrilled','eager','enthusiastic'],
+    core: ['movement','festival','bright','dance','vibrant'],
+    strong: ['fireworks','carnival','celebration','dynamic','futurism']
+  },
+  {
+    keys: ['bored','tired','weary','apathetic','dull'],
+    core: ['interior','monochrome','quiet','still life','plain'],
+    strong: ['empty room','grey','monotony','dim light','repetition']
+  },
+  {
+    keys: ['scared','frightened','afraid','terrified','horrified'],
+    core: ['night','shadow','gothic','dark forest','ominous'],
+    strong: ['apparition','phantom','horror','chiaroscuro','haunted']
+  },
+  {
+    keys: ['confused','bewildered','puzzled','perplexed','lost'],
+    core: ['maze','labyrinth','surreal','abstract','fragmented'],
+    strong: ['dream','symbolism','dissonance','illusion','cubism']
+  },
+  {
+    keys: ['surprised','shocked','astonished','amazed','startled'],
+    core: ['eruption','lightning','gesture','baroque','dramatic'],
+    strong: ['explosion','burst','tremor','shock','sudden']
+  },
+  {
+    keys: ['disgusted','revolted','repulsed','nauseated','grossed out'],
+    core: ['grotesque','satire','decay','caricature','vanitas'],
+    strong: ['macabre','putrefaction','corpse','abject','monstrous']
+  },
+  {
+    keys: ['proud','confident','dignified','triumphant','accomplished'],
+    core: ['laurel','victory','hero','monument','statue'],
+    strong: ['coronation','procession','leader','honor','triumph']
+  },
+  {
+    keys: ['jealous','envious','covetous','resentful','green with envy'],
+    core: ['mirror','rivalry','gaze','temptation','intrigue'],
+    strong: ['serpent','forbidden fruit','suspicion','Othello','scheming']
+  },
+  {
+    keys: ['guilty','ashamed','remorseful','penitent','repentant'],
+    core: ['penitent','veil','shadow','kneel','confession'],
+    strong: ['sackcloth','atonement','martyrdom','repentance','pieta']
+  },
+  {
+    keys: ['funny','laughter','laugh','joke','jokes','silly','humor','humorous','comedy'],
+    core: ['caricature','satire','jest','comic','playful'],
+    strong: ['jester','political cartoon','absurd','dada','parody']
   }
 ]
 
